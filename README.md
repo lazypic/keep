@@ -36,3 +36,11 @@ Replace org and repo as you want in the following command.
 fork github.com/:org/:repo
 ```
 
+## Environment
+
+fork has an environment that is independant of host.
+
+```
+FORKPATH # where fork will use as root for it's cloned repositories.
+```
+
