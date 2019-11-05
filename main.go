@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -73,6 +75,37 @@ func main() {
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 			fmt.Fprintln(os.Stderr, "bad reponse status:", resp.StatusCode)
 			fmt.Fprintln(os.Stderr, string(body))
+			os.Exit(1)
+		}
+
+		// successfully forked, or it has existed already.
+		home, err := os.UserHomeDir()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		dst := home + "/src/" + host + "/" + user + "/" + repo
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		_, err = os.Stat(dst)
+		if err != nil && !os.IsNotExist(err) {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		} else if err == nil {
+			fmt.Fprintln(os.Stderr, "dest directory already exist:", dst)
+			os.Exit(1)
+		}
+		dstParent := filepath.Dir(dst)
+		err = os.MkdirAll(dstParent, 0755)
+		cmd := exec.Command("git", "clone", "https://"+addr, dst)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err = cmd.Run()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
 		}
 	default:
 		fmt.Fprintln(os.Stderr, "unsupported host:", host)
