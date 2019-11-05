@@ -77,11 +77,15 @@ func main() {
 		}
 
 		// successfully forked, or it has existed already.
-		home, err := os.UserHomeDir()
-		if err != nil {
-			die(err.Error())
+		forkPath := os.Getenv("FORKPATH")
+		if forkPath == "" {
+			home, err := os.UserHomeDir()
+			if err != nil {
+				die(err.Error())
+			}
+			forkPath = home + "/src"
 		}
-		dst := home + "/src/" + host + "/" + user + "/" + repo
+		dst := forkPath + "/" + host + "/" + user + "/" + repo
 		if err != nil {
 			die(err.Error())
 		}
