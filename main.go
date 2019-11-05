@@ -73,7 +73,7 @@ func main() {
 			die(err.Error())
 		}
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-			die(fmt.Sprintf("bad reponse status: %s\n%s", resp.StatusCode, string(body)))
+			die(fmt.Sprintf("bad reponse status: %d\n%s", resp.StatusCode, string(body)))
 		}
 
 		// successfully forked, or it has existed already.
