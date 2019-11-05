@@ -93,6 +93,9 @@ func main() {
 		}
 		dstParent := filepath.Dir(dst)
 		err = os.MkdirAll(dstParent, 0755)
+		if err != nil {
+			die(err.Error())
+		}
 		cmd := exec.Command("git", "clone", "https://"+addr, dst)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
