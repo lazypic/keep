@@ -28,3 +28,11 @@ When you generate the token, you should see your token value.
 
 Save it in your FORK_GITHUB_AUTH environment variable.
 
+## Usage
+
+Replace org and repo as you want in the following command.
+
+```
+fork github.com/:org/:repo
+```
+
