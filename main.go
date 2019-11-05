@@ -107,6 +107,14 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
+		cmd = exec.Command("git", "remote", "add", "upstream", "https://"+addr)
+		cmd.Dir = dst
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, string(out))
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
 	default:
 		fmt.Fprintln(os.Stderr, "unsupported host:", host)
 		os.Exit(1)
