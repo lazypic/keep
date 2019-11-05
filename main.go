@@ -30,9 +30,14 @@ func main() {
 	path := hostPath[1]
 	switch host {
 	case "github.com":
+		user := os.Getenv("FORK_GITHUB_USER")
+		if user == "" {
+			fmt.Fprintln(os.Stderr, "FORK_GITHUB_USER not defined")
+			os.Exit(1)
+		}
 		token := os.Getenv("FORK_GITHUB_AUTH")
 		if token == "" {
-			fmt.Fprintln(os.Stderr, "github auth token not exist")
+			fmt.Fprintln(os.Stderr, "FORK_GITHUB_AUTH not defined")
 			os.Exit(1)
 		}
 		paths := strings.Split(path, "/")
@@ -43,7 +48,7 @@ func main() {
 		org := paths[0]
 		repo := paths[1]
 		forkApiAddr := fmt.Sprintf("https://api.github.com/repos/%s/%s/forks", org, repo)
-		content, err := json.Marshal(githubContent{organization: "kybin"})
+		content, err := json.Marshal(githubContent{organization: user})
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "unable to marshal githubContent")
 		}
