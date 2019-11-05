@@ -68,9 +68,12 @@ func main() {
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
 		}
-		_ = body
-		// fmt.Println(string(body))
+		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+			fmt.Fprintln(os.Stderr, "bad reponse status:", resp.StatusCode)
+			fmt.Fprintln(os.Stderr, string(body))
+		}
 	default:
 		fmt.Fprintln(os.Stderr, "unsupported host:", host)
 		os.Exit(1)
