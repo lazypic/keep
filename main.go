@@ -16,9 +16,9 @@ type githubContent struct {
 	organization string
 }
 
-// die prints msg then exit.
-func die(msg string) {
-	fmt.Fprintln(os.Stderr, msg)
+// die prints error then exit.
+func die(err interface{}) {
+	fmt.Fprintln(os.Stderr, err)
 	os.Exit(1)
 }
 
@@ -57,7 +57,7 @@ func main() {
 		}
 		req, err := http.NewRequest("POST", forkApiAddr, bytes.NewBuffer(content))
 		if err != nil {
-			die(err.Error())
+			die(err)
 		}
 		req.Header.Add("Content-Type", "application/json")
 		req.Header.Add("Accept", "application/vnd.github.v3+json")
@@ -65,12 +65,12 @@ func main() {
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
-			die(err.Error())
+			die(err)
 		}
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			die(err.Error())
+			die(err)
 		}
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 			die(fmt.Sprintf("bad reponse status: %d\n%s", resp.StatusCode, string(body)))
@@ -81,31 +81,31 @@ func main() {
 		if forkPath == "" {
 			home, err := os.UserHomeDir()
 			if err != nil {
-				die(err.Error())
+				die(err)
 			}
 			forkPath = home + "/src"
 		}
 		dst := forkPath + "/" + host + "/" + user + "/" + repo
 		if err != nil {
-			die(err.Error())
+			die(err)
 		}
 		_, err = os.Stat(dst)
 		if err != nil && !os.IsNotExist(err) {
-			die(err.Error())
+			die(err)
 		} else if err == nil {
 			die(fmt.Sprintf("dest directory already exist: %s", dst))
 		}
 		dstParent := filepath.Dir(dst)
 		err = os.MkdirAll(dstParent, 0755)
 		if err != nil {
-			die(err.Error())
+			die(err)
 		}
 		cmd := exec.Command("git", "clone", "https://"+addr, dst)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		err = cmd.Run()
 		if err != nil {
-			die(err.Error())
+			die(err)
 		}
 		cmd = exec.Command("git", "remote", "add", "upstream", "https://"+addr)
 		cmd.Dir = dst
