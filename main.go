@@ -60,7 +60,9 @@ func main() {
 			die(err.Error())
 		}
 		req.Header.Add("Content-Type", "application/json")
+		req.Header.Add("Accept", "application/vnd.github.v3+json")
 		req.Header.Add("Authorization", "token "+token)
+
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
 			die(err.Error())
