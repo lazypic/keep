@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -23,10 +24,12 @@ func die(err interface{}) {
 }
 
 func main() {
-	args := os.Args[1:]
-	addr := args[0]
+	var fork bool
+	flag.BoolVar(&fork, "fork", false, "create a fork of the repo, then download the fork")
+	flag.Parse()
+	addr := flag.Args()[0]
 	if strings.Contains(addr, "://") {
-		die("fork always use https so you don't need to specify")
+		die("keep always use https so you don't need to specify")
 	}
 	hostPath := strings.SplitN(addr, "/", 2)
 	if len(hostPath) != 2 {
@@ -36,60 +39,70 @@ func main() {
 	path := hostPath[1]
 	switch host {
 	case "github.com":
-		user := os.Getenv("FORK_GITHUB_USER")
-		if user == "" {
-			die("FORK_GITHUB_USER not defined")
+		user := os.Getenv("KEEP_GITHUB_USER")
+		token := os.Getenv("KEEP_GITHUB_AUTH")
+		if fork {
+			if user == "" {
+				die("KEEP_GITHUB_USER should be specified to fork")
+			}
+			if token == "" {
+				die("KEEP_GITHUB_AUTH should be specified to fork")
+			}
 		}
-		token := os.Getenv("FORK_GITHUB_AUTH")
-		if token == "" {
-			die("FORK_GITHUB_AUTH not defined")
-		}
+
 		paths := strings.Split(path, "/")
 		if len(paths) != 2 {
 			die("invalid repository address")
 		}
 		org := paths[0]
 		repo := paths[1]
-		forkApiAddr := fmt.Sprintf("https://api.github.com/repos/%s/%s/forks", org, repo)
-		content, err := json.Marshal(githubContent{organization: user})
-		if err != nil {
-			die("unable to marshal githubContent")
-		}
-		req, err := http.NewRequest("POST", forkApiAddr, bytes.NewBuffer(content))
-		if err != nil {
-			die(err)
-		}
-		req.Header.Add("Content-Type", "application/json")
-		req.Header.Add("Accept", "application/vnd.github.v3+json")
-		req.Header.Add("Authorization", "token "+token)
 
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			die(err)
-		}
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			die(err)
-		}
-		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-			die(fmt.Sprintf("bad reponse status: %d\n%s", resp.StatusCode, string(body)))
+		upstream := ""
+		origin := addr
+		if fork {
+			upstream = addr
+			origin = "github.com/" + user + "/" + repo
 		}
 
-		// successfully forked, or it has existed already.
-		forkPath := os.Getenv("FORKPATH")
-		if forkPath == "" {
+		if fork {
+			forkApiAddr := fmt.Sprintf("https://api.github.com/repos/%s/%s/forks", org, repo)
+			content, err := json.Marshal(githubContent{organization: user})
+			if err != nil {
+				die("unable to marshal githubContent")
+			}
+			req, err := http.NewRequest("POST", forkApiAddr, bytes.NewBuffer(content))
+			if err != nil {
+				die(err)
+			}
+			req.Header.Add("Content-Type", "application/json")
+			req.Header.Add("Accept", "application/vnd.github.v3+json")
+			req.Header.Add("Authorization", "token "+token)
+
+			resp, err := http.DefaultClient.Do(req)
+			if err != nil {
+				die(err)
+			}
+			defer resp.Body.Close()
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				die(err)
+			}
+			if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+				die(fmt.Sprintf("bad reponse status: %d\n%s", resp.StatusCode, string(body)))
+			}
+			// successfully forked, or it has existed already.
+		}
+
+		keepPath := os.Getenv("KEEPPATH")
+		if keepPath == "" {
 			home, err := os.UserHomeDir()
 			if err != nil {
 				die(err)
 			}
-			forkPath = home + "/src"
+			keepPath = home + "/src"
 		}
-		dst := forkPath + "/" + host + "/" + user + "/" + repo
-		if err != nil {
-			die(err)
-		}
-		_, err = os.Stat(dst)
+		dst := keepPath + "/" + origin
+		_, err := os.Stat(dst)
 		if err != nil && !os.IsNotExist(err) {
 			die(err)
 		} else if err == nil {
@@ -100,18 +113,32 @@ func main() {
 		if err != nil {
 			die(err)
 		}
-		cmd := exec.Command("git", "clone", "https://"+addr, dst)
+		cloneAddr := origin
+		if token != "" {
+			cloneAddr = token + "@" + cloneAddr
+		} else if user != "" {
+			cloneAddr = user + "@" + cloneAddr
+		}
+		cmd := exec.Command("git", "clone", "https://"+cloneAddr, dst)
+		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		err = cmd.Run()
 		if err != nil {
 			die(err)
 		}
-		cmd = exec.Command("git", "remote", "add", "upstream", "https://"+addr)
-		cmd.Dir = dst
-		out, err := cmd.CombinedOutput()
-		if err != nil {
-			die(fmt.Sprintf("%s\n%s", string(out), err))
+		if upstream != "" {
+			if token != "" {
+				upstream = token + "@" + addr
+			} else if user != "" {
+				upstream = user + "@" + addr
+			}
+			cmd = exec.Command("git", "remote", "add", "upstream", "https://"+addr)
+			cmd.Dir = dst
+			out, err := cmd.CombinedOutput()
+			if err != nil {
+				die(fmt.Sprintf("%s\n%s", string(out), err))
+			}
 		}
 	default:
 		die(fmt.Sprintf("unsupported host: %s", host))
