@@ -33,7 +33,7 @@ func main() {
 	}
 	hostPath := strings.SplitN(addr, "/", 2)
 	if len(hostPath) != 2 {
-		die("invalid form of address")
+		die("invalid form of address:" + addr)
 	}
 	host := hostPath[0]
 	path := hostPath[1]
@@ -52,7 +52,7 @@ func main() {
 
 		paths := strings.Split(path, "/")
 		if len(paths) != 2 {
-			die("invalid repository address")
+			die("invalid repository path:" + path)
 		}
 		org := paths[0]
 		repo := paths[1]
@@ -68,7 +68,7 @@ func main() {
 			forkApiAddr := fmt.Sprintf("https://api.github.com/repos/%s/%s/forks", org, repo)
 			content, err := json.Marshal(githubContent{organization: user})
 			if err != nil {
-				die("unable to marshal githubContent")
+				die(fmt.Errorf("unable to marshal githubContent: %w", err))
 			}
 			req, err := http.NewRequest("POST", forkApiAddr, bytes.NewBuffer(content))
 			if err != nil {
@@ -85,10 +85,10 @@ func main() {
 			defer resp.Body.Close()
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
-				die(err)
+				die(fmt.Errorf("could not read response body: %w", err))
 			}
 			if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-				die(fmt.Sprintf("bad reponse status: %d\n%s", resp.StatusCode, string(body)))
+				die(fmt.Sprintf("bad response status: %d\n%s", resp.StatusCode, string(body)))
 			}
 			// successfully forked, or it has existed already.
 		}
@@ -106,12 +106,12 @@ func main() {
 		if err != nil && !os.IsNotExist(err) {
 			die(err)
 		} else if err == nil {
-			die(fmt.Sprintf("dest directory already exist: %s", dst))
+			die(fmt.Sprintf("dest directory already exists: %s", dst))
 		}
 		dstParent := filepath.Dir(dst)
 		err = os.MkdirAll(dstParent, 0755)
 		if err != nil {
-			die(err)
+			die(fmt.Errorf("could not make intermediate directories: %w", err))
 		}
 		cloneAddr := origin
 		if token != "" {
