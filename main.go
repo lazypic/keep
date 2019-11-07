@@ -129,11 +129,11 @@ func main() {
 		}
 		if upstream != "" {
 			if token != "" {
-				upstream = token + "@" + addr
+				upstream = token + "@" + upstream
 			} else if user != "" {
-				upstream = user + "@" + addr
+				upstream = user + "@" + upstream
 			}
-			cmd = exec.Command("git", "remote", "add", "upstream", "https://"+addr)
+			cmd = exec.Command("git", "remote", "add", "upstream", "https://"+upstream)
 			cmd.Dir = dst
 			out, err := cmd.CombinedOutput()
 			if err != nil {
