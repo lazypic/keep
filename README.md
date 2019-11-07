@@ -2,8 +2,9 @@
 
 keep organize your code!
 
-keep downloads any source code into your $KEEPPATH.
-It's inspired by $GOPATH. And you can also set $KEEPPATH to $GOPATH/src.
+keep downloads any source code into your `$KEEPPATH`.
+
+It's inspired by $GOPATH. And you can also set `$KEEPPATH` to `$GOPATH/src`.
 
 ## Setup Environment
 
@@ -13,7 +14,7 @@ keep needs an environment that is independant of host.
 KEEPPATH # where keep will use as root for it's cloned repositories.
 ```
 
-If $KEEPPATH is not set, $HOME/src will be used by default.
+If `$KEEPPATH` is not set, `$HOME/src` will be used by default.
 
 keep also needs to be set host specific Environments.
 
@@ -49,11 +50,11 @@ KEEP_GITHUB_AUTH # your github authentication token
 
 Login into your account.
 
-Goto 'Setting' > 'Developer Settings' > 'Personal access token'
+Goto `Setting` > `Developer Settings` > `Personal access token`
 
-Select 'Generate new token'. Turn on the 'repo' checkbox.
+Select `Generate new token`. Turn on the `repo` checkbox.
 When you generate the token, you should see your token value.
 
-Save it in your KEEP_GITHUB_AUTH environment variable.
+Save it in your `KEEP_GITHUB_AUTH` environment variable.
 
 
