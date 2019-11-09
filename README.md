@@ -1,6 +1,6 @@
 # Keep
 
-![travisCI](https://secure.travis-ci.org/lazypic/keep.png)
+![travisCI](https://secure.travis-ci.org/lazypic/keep.svg)
 
 Keep organize your code!
 
