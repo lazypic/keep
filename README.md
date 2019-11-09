@@ -1,5 +1,7 @@
 # Keep
 
+![travisCI](https://secure.travis-ci.org/lazypic/keep.png)
+
 Keep organize your code!
 
 Keep downloads any source code into your `$KEEPPATH`.
