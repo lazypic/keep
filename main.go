@@ -17,6 +17,10 @@ type githubContent struct {
 	organization string
 }
 
+type githubResponse struct {
+	FullName string `json:"full_name"`
+}
+
 // die prints error then exit.
 func die(err interface{}) {
 	fmt.Fprintln(os.Stderr, err)
@@ -61,10 +65,11 @@ func main() {
 		origin := addr
 		if fork {
 			upstream = addr
-			origin = "github.com/" + user + "/" + repo
+			// origin will set by fork api response
 		}
 
 		if fork {
+			// request a fork of the repo
 			forkApiAddr := fmt.Sprintf("https://api.github.com/repos/%s/%s/forks", org, repo)
 			content, err := json.Marshal(githubContent{organization: user})
 			if err != nil {
@@ -91,6 +96,9 @@ func main() {
 				die(fmt.Sprintf("bad response status: %d\n%s", resp.StatusCode, string(body)))
 			}
 			// successfully forked, or it has existed already.
+			forked := githubResponse{}
+			json.Unmarshal(body, &forked)
+			origin = "github.com/" + forked.FullName
 		}
 
 		keepPath := os.Getenv("KEEPPATH")
