@@ -13,6 +13,14 @@ import (
 	"strings"
 )
 
+var Usage string = `
+Keep downloads and organizes repositories.
+
+Usage:
+
+	keep [arguments] <repository>
+`
+
 type githubContent struct {
 	organization string
 }
@@ -31,7 +39,13 @@ func main() {
 	var fork bool
 	flag.BoolVar(&fork, "fork", false, "create a fork of the repo, then download the fork")
 	flag.Parse()
-	addr := flag.Args()[0]
+	args := flag.Args()
+	if len(args) == 0 {
+		fmt.Fprintln(os.Stderr, Usage)
+		flag.PrintDefaults()
+		os.Exit(1)
+	}
+	addr := args[0]
 	if strings.Contains(addr, "://") {
 		die("keep always use https so you don't need to specify")
 	}
