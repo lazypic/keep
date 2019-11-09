@@ -1,22 +1,22 @@
-# keep
+# Keep
 
-keep organize your code!
+Keep organize your code!
 
-keep downloads any source code into your `$KEEPPATH`.
+Keep downloads any source code into your `$KEEPPATH`.
 
 It's inspired by $GOPATH. And you can also set `$KEEPPATH` to `$GOPATH/src`.
 
 ## Setup Environment
 
-keep needs an environment that is independant of host.
+Keep needs an environment that is independant of host.
 
 ```
-KEEPPATH # where keep will use as root for it's cloned repositories.
+KEEPPATH # where Keep will use as root for it's cloned repositories.
 ```
 
 If `$KEEPPATH` is not set, `$HOME/src` will be used by default.
 
-keep also needs to be set host specific Environments.
+Keep also needs to be set host specific Environments.
 
 ## Usage
 
