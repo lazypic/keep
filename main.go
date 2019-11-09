@@ -69,7 +69,7 @@ func main() {
 		}
 
 		if fork {
-			// request a fork of teh repo
+			// request a fork of the repo
 			forkApiAddr := fmt.Sprintf("https://api.github.com/repos/%s/%s/forks", org, repo)
 			content, err := json.Marshal(githubContent{organization: user})
 			if err != nil {
