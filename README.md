@@ -26,7 +26,7 @@ If you download a github repo, do following.
 keep github.com/:org/:repo
 ```
 
-Instead you want a fork of the repo, do following.
+If you want to fork and download the forked repo instead, do following.
 
 ```
 keep -fork github.com/:org/:repo
