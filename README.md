@@ -23,14 +23,14 @@ keep also needs to be set host specific Environments.
 If you download a github repo, do following.
 (Replace org and repo)
 
-```
-keep github.com/:org/:repo
+```bash
+$ keep github.com/:org/:repo
 ```
 
 If you want to fork and download the forked repo instead, do following.
 
-```
-keep -fork github.com/:org/:repo
+```bash
+$ keep -fork github.com/:org/:repo
 ```
 
 Note that the only supported host is Github by now.
