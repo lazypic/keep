@@ -4,6 +4,8 @@
 
 Keep organize your code!
 
+Keep helps collaboration on Git hosts by setting upstream automatically.
+
 Keep downloads any source code into your `$KEEPPATH`.
 
 It's inspired by $GOPATH. And you can also set `$KEEPPATH` to `$GOPATH/src`.
