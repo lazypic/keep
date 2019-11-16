@@ -2,7 +2,7 @@
 
 ![travisCI](https://secure.travis-ci.org/lazypic/keep.svg)
 
-Keep organize your code!
+
 
 Keep helps collaboration on Git hosts by setting upstream automatically.
 
