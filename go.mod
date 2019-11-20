@@ -1,3 +1,3 @@
-module github.com/kybin/keep
+module github.com/lazypic/keep
 
 go 1.13
