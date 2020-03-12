@@ -43,11 +43,13 @@ Note that the only supported host is Github by now.
 
 ### Environment
 
-You need to set these environment variables to create fork or access private repo.
+You need to set these environment variables to setup 'origin-private' remote.
+'origin-private' is a special remote that is same as 'origin' but with credential
+to do some administrative actions.
 
 ```
-KEEP_GITHUB_USER # your github id
-KEEP_GITHUB_AUTH # your github authentication token
+GITHUB_USER # your github id
+GITHUB_AUTH # your github authentication token
 ```
 
 ### Create an Authentication token
@@ -59,6 +61,5 @@ Goto `Setting` > `Developer Settings` > `Personal access token`
 Select `Generate new token`. Turn on the `repo` checkbox.
 When you generate the token, you should see your token value.
 
-Save it in your `KEEP_GITHUB_AUTH` environment variable.
-
+Save it in your `GITHUB_AUTH` environment variable.
 

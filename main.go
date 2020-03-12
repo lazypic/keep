@@ -68,7 +68,7 @@ func main() {
 		// you don't need permission for 'origin' except some specific times.
 		// when you need it, use remote 'origin-private' instead.
 		// which is actually 'origin' with the authentication token.
-		token := os.Getenv("KEEP_GITHUB_AUTH")
+		token := os.Getenv("GITHUB_AUTH")
 		if token == "" {
 			return
 		}
